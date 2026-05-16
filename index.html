@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Backmans Recept</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍲</text></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 160'><rect width='160' height='160' rx='26' fill='%232b2017'/><text x='50%25' y='54%25' font-size='100' text-anchor='middle' dominant-baseline='central'>🍲</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #faf7f2;
+    --warm: #f5ede0;
+    --terracotta: #c4622d;
+    --dark: #2b2017;
+    --mid: #6b4f35;
+    --light-mid: #a07850;
+    --accent: #e8a87c;
+    --green: #5a7a5a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--cream);
+    font-family: 'Source Sans 3', sans-serif;
+    color: var(--dark);
+    min-height: 100vh;
+  }
+
+  header {
+    background: var(--dark);
+    color: var(--cream);
+    text-align: center;
+    padding: 3rem 2rem 2.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 40px,
+      rgba(255,255,255,0.02) 40px,
+      rgba(255,255,255,0.02) 80px
+    );
+  }
+
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    letter-spacing: 0.05em;
+    position: relative;
+  }
+
+  header p {
+    font-size: 0.9rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-top: 0.5rem;
+    position: relative;
+  }
+
+  .ornament {
+    color: var(--terracotta);
+    font-size: 1.5rem;
+    margin: 0.5rem 0;
+    position: relative;
+  }
+
+  /* Category nav */
+  .categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+    padding: 1.5rem 1rem;
+    background: var(--warm);
+    border-bottom: 1px solid var(--accent);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .cat-btn {
+    background: none;
+    border: 1px solid var(--light-mid);
+    color: var(--mid);
+    padding: 0.35rem 0.9rem;
+    border-radius: 20px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .cat-btn:hover, .cat-btn.active {
+    background: var(--terracotta);
+    border-color: var(--terracotta);
+    color: white;
+  }
+
+  /* Main layout */
+  main {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 2rem 1rem 4rem;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    color: var(--terracotta);
+    margin: 2.5rem 0 1.2rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+  }
+
+  .section-title span { font-size: 1.2rem; }
+
+  .recipe-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.2rem;
+  }
+
+  .recipe-card {
+    background: white;
+    border-radius: 4px;
+    border: 1px solid #e8ddd0;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+  }
+
+  .recipe-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(43,32,23,0.12);
+  }
+
+  .card-header {
+    background: var(--warm);
+    padding: 1rem 1.2rem 0.8rem;
+    border-bottom: 1px solid #e8ddd0;
+  }
+
+  .card-header h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    color: var(--dark);
+    line-height: 1.3;
+  }
+
+  .card-body {
+    padding: 1rem 1.2rem;
+    font-size: 0.87rem;
+    line-height: 1.6;
+    color: var(--mid);
+  }
+
+  /* Modal */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(43,32,23,0.7);
+    z-index: 1000;
+    padding: 1rem;
+    overflow-y: auto;
+  }
+
+  .modal-overlay.open { display: flex; align-items: flex-start; justify-content: center; }
+
+  .modal {
+    background: var(--cream);
+    max-width: 640px;
+    width: 100%;
+    border-radius: 4px;
+    margin: 2rem auto;
+    overflow: hidden;
+    position: relative;
+    animation: modalIn 0.25s ease;
+  }
+
+  @keyframes modalIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 1rem; right: 1rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--cream);
+    line-height: 1;
+    z-index: 2;
+    opacity: 0.8;
+  }
+
+  .modal-close:hover { opacity: 1; }
+
+  .modal-top {
+    background: var(--dark);
+    color: var(--cream);
+    padding: 2rem 2rem 1.5rem;
+  }
+
+  .modal-top h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    line-height: 1.3;
+    padding-right: 2rem;
+  }
+
+  .modal-top .cat-label {
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-top: 0.3rem;
+  }
+
+  .modal-content {
+    padding: 1.8rem 2rem;
+  }
+
+  .recipe-section {
+    margin-bottom: 1.5rem;
+  }
+
+  .recipe-section h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    color: var(--terracotta);
+    margin-bottom: 0.7rem;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    border-bottom: 1px dashed var(--accent);
+    padding-bottom: 0.3rem;
+  }
+
+  .recipe-section ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .recipe-section ul li {
+    padding: 0.2rem 0 0.2rem 1.2rem;
+    font-size: 0.9rem;
+    color: var(--dark);
+    border-bottom: 1px dotted #e8ddd0;
+    position: relative;
+  }
+
+  .recipe-section ul li::before {
+    content: '·';
+    position: absolute;
+    left: 0;
+    color: var(--terracotta);
+    font-weight: bold;
+  }
+
+  .recipe-section ol {
+    padding-left: 1.3rem;
+  }
+
+  .recipe-section ol li {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-bottom: 0.5rem;
+    color: var(--dark);
+  }
+
+  .recipe-section p {
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: var(--dark);
+    white-space: pre-line;
+  }
+
+  .search-wrap {
+    padding: 1.5rem 1rem 0;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 0.7rem 1rem;
+    border: 1px solid #d0c4b4;
+    border-radius: 4px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.95rem;
+    background: white;
+    color: var(--dark);
+    outline: none;
+  }
+
+  .search-input:focus { border-color: var(--terracotta); }
+
+  .empty-msg {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--light-mid);
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="ornament">❧</div>
+  <h1>Receptbok</h1>
+  <p>Familjens recept & favoriter</p>
+  <div class="ornament">❧</div>
+</header>
+
+<div class="search-wrap">
+  <input type="text" class="search-input" placeholder="Sök recept…" id="searchInput" oninput="filterRecipes()">
+</div>
+
+<div class="categories" id="categoryNav"></div>
+
+<main id="mainContent"></main>
+
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" id="modal">
+    <button class="modal-close" onclick="closeModalBtn()">✕</button>
+    <div class="modal-top">
+      <div class="cat-label" id="modalCat"></div>
+      <h2 id="modalTitle"></h2>
+    </div>
+    <div class="modal-content" id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+const recipes = [
+  {
+    id: 1,
+    title: "Ingegärds Fläskkarre",
+    category: "Kött & fågel",
+    ingredients: [
+      "Hel fläskkarré",
+      "Olivolja classico",
+      "Lite timjan",
+      "Rosmarin",
+      "Salvia",
+      "Oregano",
+      "Krossad fänkål, ca 2 msk",
+      "Salt & svartpeppar"
+    ],
+    instructions: `Skär karréen i 3 skivor så den blir lång och "utfälld" – men inte ända ner. Skär snitt för att kryddorna ska komma in. Veckla ut och smörj med olivolja och kryddor. Bind ihop och gnid in hela steken med salt och olivolja.
+
+Lägg i stekpåse med kvistarna om det är färska kryddor. Bind ihop med snöre och gör 1 hål i påsen.
+
+Stekpåse: 150 grader, 2 timmar.
+
+Tillaga dagen innan och lägg i press 1 dygn (i folie). Skär i skivor vid servering.
+
+Tips: Servera med risotto och inlagda småtomater i olja med basilika och vitlök.`
+  },
+  {
+    id: 2,
+    title: "Ingegärds Risotto",
+    category: "Vegetariskt & tillbehör",
+    ingredients: [
+      "2 gula lökar, finhackade",
+      "2 msk smör",
+      "Olivolja",
+      "1 liter buljong (kött- och/eller grönsaksbuljong)",
+      "3 dl torrt vitt vin (8–9%, ej sött)",
+      "2 påsar saffran",
+      "Ca 5 dl ris",
+      "Minst 2 dl riven parmesan"
+    ],
+    instructions: `Fräs finhackad lök i smör och olivolja i ca 10 minuter tills den är blank.
+
+Tillsätt riset och rör runt. Häll i vinet i omgångar och rör tills det absorberas.
+
+Tillsätt buljong (varm) skvättvis, rör hela tiden. Tillsätt saffran.
+
+Kör på tills riset är al dente. Rör ner rikligt med parmesan på slutet.`
+  },
+  {
+    id: 3,
+    title: "Thaisoppa (Egen)",
+    category: "Soppor",
+    ingredients: [
+      "4 sötpotatisar",
+      "7 morötter",
+      "2 msk ingefära",
+      "3 vitlöksklyftor",
+      "1 msk soja",
+      "1 msk fisksås",
+      "1 msk risvinäger",
+      "5 limeblad",
+      "1 hönsbuljong",
+      "Kokos aminos",
+      "Lite koriander",
+      "1 msk limesaft",
+      "5 dl kokosmjölk",
+      "7 dl vatten"
+    ],
+    instructions: `Skär sötpotatis och morötter i bitar. Fräs vitlök och ingefära.
+
+Tillsätt sötpotatis, morötter och resten av ingredienserna. Koka tills grönsakerna är mjuka.
+
+Mixa slät och servera med koriander.`
+  },
+  {
+    id: 4,
+    title: "Baked Oats – Morotskaka",
+    category: "Frukost & bakverk",
+    ingredients: [
+      "2 bananer",
+      "6 dl havregryn",
+      "3 dl proteinpulver",
+      "2–3 morötter (rivna)",
+      "1,5 dl mjölk",
+      "2 msk lönnsirap",
+      "2 tsk bakpulver",
+      "2 tsk kanel",
+      "Valnötter"
+    ],
+    instructions: `Frosting: 200 g färskost, 150 g vaniljyoghurt, vaniljsocker, florsocker.
+
+1. Blanda alla ingredienser till kakan.
+2. Grädda i 180 grader i 12–15 minuter.
+3. Blanda frostingen.
+4. Låt svalna, toppa med frosting och njut!`
+  },
+  {
+    id: 5,
+    title: "Vinsås med Dragon (Lisa)",
+    category: "Såser & dressingar",
+    ingredients: [
+      "Mycket smör",
+      "1 liten gul lök, finhackad",
+      "2 msk grovmalen svartpeppar",
+      "2,5 msk torkad dragon (smulas i sista 30 sek)",
+      "1 köttbuljong + 1 kalvbuljong",
+      "3 dl kraftigt rödvin",
+      "5 dl grädde 40%"
+    ],
+    instructions: `Fräs finhackad lök i mycket smör.
+
+Tillsätt grovmalen svartpeppar. Tillsätt vin och koka kraftigt tills det reducerat.
+
+Tillsätt buljongerna och grädden. Låt stå på låg värme en stund – koka inte.
+
+Sista 30 sekunder: smula ner dragonen och ta av plattan direkt.`
+  },
+  {
+    id: 6,
+    title: "Honungs- och Senapsdressing",
+    category: "Såser & dressingar",
+    ingredients: [
+      "1 msk honung",
+      "1 msk olivolja",
+      "1 msk pressad citron",
+      "1 tsk fransk senap",
+      "1 msk hackad persilja",
+      "Salt och peppar"
+    ],
+    instructions: `1. Blanda honung, olja, citron och senap.
+2. Rör ner persilja.
+3. Smaka av med salt och peppar.`
+  },
+  {
+    id: 7,
+    title: "Lasagne (1 kg färs)",
+    category: "Kött & fågel",
+    ingredients: [
+      "1 kg blandfärs",
+      "2 lökar (hackade)",
+      "2 vitlöksklyftor",
+      "600 g krossade tomater",
+      "Ca 3 dl vatten",
+      "1,5 buljongtärning",
+      "2 msk tomatpuré",
+      "1 msk sherryvinäger",
+      "1,5 msk Worcestershiresås",
+      "5–7 droppar Tabasco",
+      "1,5 tsk socker",
+      "0,75–1 tsk vitpeppar",
+      "1,5 msk oregano + 1 msk basilika + 0,5 tsk timjan",
+      "5 dl Crème Fraiche (32%)",
+      "150 g riven ost + 100 g fetaost",
+      "350–400 g lasagneplattor"
+    ],
+    instructions: `Köttfärssåsen: Bryn färs och lök. Tillsätt alla ingredienser och sjud 45 min. Rör ner örter sist.
+
+Vit ostsås: Blanda Crème Fraiche, riven ost och smulad fetaost.
+
+Montering: Köttfärssås i botten, varva sedan plattor, färs och vit sås. Avsluta med mycket vit sås på toppen.
+
+Grädda: 200°C i ca 30 min.
+
+Dagen efter: Värm under folie i 150°C, 30–40 min.
+
+Sallad: Vinägrett med 1,5 msk olja, 0,5 msk sherryvinäger, 0,5 tsk dijon, honung.`
+  },
+  {
+    id: 8,
+    title: "Rödbetspålägg",
+    category: "Smörgåspålägg & snacks",
+    ingredients: [
+      "Rödbeta",
+      "Solrosfrön",
+      "Ättika",
+      "Citronsaft",
+      "Pepparrot",
+      "Salt",
+      "Peppar"
+    ],
+    instructions: `Mixa eller rör ihop alla ingredienser. Smaka av med salt och peppar.`
+  },
+  {
+    id: 9,
+    title: "Glutenfria Pannkakor",
+    category: "Frukost & bakverk",
+    ingredients: [
+      "2 dl havremjöl (mixa havregryn)",
+      "3 dl mjölk, havre- eller nötdryck",
+      "3 ägg",
+      "1 nypa salt"
+    ],
+    instructions: `1. Rör ihop havremjöl, salt och vätska.
+2. Vispa i äggen.
+3. Stek i smör eller kokosolja.`
+  },
+  {
+    id: 10,
+    title: "Thaisås",
+    category: "Såser & dressingar",
+    ingredients: [
+      "Ingefära",
+      "Chili",
+      "Vitlök",
+      "Sesamolja",
+      "Rörsocker",
+      "Soja (dubbelt så mycket som socker)",
+      "Risvinäger (samma mängd som soja)",
+      "Kycklingfond + majsmjöl",
+      "Salladslök"
+    ],
+    instructions: `Mixa ingefära, chili och vitlök. Tillsätt sesamolja.
+
+Blanda rörsocker, soja (dubbelt mot socker) och risvinäger (samma som soja).
+
+Blanda kycklingfond med majsmjöl och tillsätt.
+
+Garnera med salladslök.`
+  },
+  {
+    id: 11,
+    title: "Änglamark-soppa",
+    category: "Soppor",
+    ingredients: [
+      "Lök",
+      "Rörsocker",
+      "Kyckling",
+      "Morot",
+      "Kokosmjölk",
+      "Äpple",
+      "Röda linser",
+      "Mango",
+      "Ingefära",
+      "Vitlök",
+      "Koriander",
+      "Gurkmeja",
+      "Senap",
+      "Havssalt",
+      "Citronjuice",
+      "Kycklingbuljong"
+    ],
+    instructions: `Fräs lök, vitlök och ingefära. Tillsätt kyckling och bryn.
+
+Tillsätt morötter, linser, äpple och mango. Krydda med gurkmeja, senap och koriander.
+
+Häll i kokosmjölk och buljong. Koka tills allt är mjukt.
+
+Mixa slät, smaka av med citronjuice, salt och lite socker.`
+  },
+  {
+    id: 12,
+    title: "Köttfärssås som Jack gillar",
+    category: "Kött & fågel",
+    ingredients: [
+      "1 kg nötfärs",
+      "2 gula lökar",
+      "2 stora morötter (mixade fint)",
+      "2 köttbuljong",
+      "1 burk krossade tomater med basilika",
+      "Basilika & oregano",
+      "Lite salt",
+      "2 msk soja",
+      "Socker",
+      "Vatten",
+      "Minst 1 dl tomatpuré",
+      "Vinäger",
+      "Peppar",
+      "Grädde"
+    ],
+    instructions: `Bryn nötfärsen med hackad lök och finmixad morot.
+
+Tillsätt buljong, tomater, tomatpuré, soja och kryddor. Späd med vatten.
+
+Smaka av med socker och vinäger.
+
+Koka 2,5 timmar på låg värme.
+
+Rör ner grädde mot slutet.`
+  },
+  {
+    id: 13,
+    title: "Pizzabotten (Low Carb)",
+    category: "Frukost & bakverk",
+    ingredients: [
+      "1 ägg",
+      "1 dl riven ost (gärna lagrad)",
+      "1 msk mandelmjöl",
+      "1 tsk fiberhusk",
+      "En nypa salt"
+    ],
+    instructions: `1. Sätt ugnen på 200 grader.
+2. Blanda alla ingredienser i en skål.
+3. Platta ut degen på bakplåtspapper till en rund botten.
+4. Förgrädda ca 10 minuter tills den fått lite färg.
+5. Lägg på valfri topping och grädda ytterligare 5–10 minuter.`
+  },
+  {
+    id: 14,
+    title: "Asiatisk kycklingfärsröra med kål & morötter",
+    category: "Kött & fågel",
+    ingredients: [
+      "1 kg kycklingfärs",
+      "4 vitlöksklyftor",
+      "2 msk riven färsk ingefära",
+      "600 g vitkål, strimlad",
+      "4 morötter, strimlad",
+      "2 gula lökar",
+      "Olja till stekning",
+      "— Sås —",
+      "2 dl ostronsås",
+      "2 msk japansk soja",
+      "2 tsk farinsocker eller honung",
+      "2 tsk sesamolja",
+      "1–2 dl vatten"
+    ],
+    instructions: `Stek kycklingfärsen. Riv ner vitlök och ingefära, salta och peppra. Lägg färsen åt sidan.
+
+Strimla morot och kål, skiva lök i stora bitar. Stek grönsakerna tills de mjuknat något.
+
+Vänd ner köttfärsen och rör ihop. Tillsätt såsen och låt steka tillsammans några minuter.
+
+Servera med kokt jasminris!`
+  },
+  {
+    id: 15,
+    title: "Woksås",
+    category: "Såser & dressingar",
+    ingredients: [
+      "1 msk fisksås",
+      "1 msk ostronsås",
+      "1 msk soja",
+      "½ msk socker",
+      "Lite vatten"
+    ],
+    instructions: `Blanda alla ingredienser. Dubbla eller flerdubbla vid behov.
+
+Häll blandningen i woken mot slutet av tillagningen.
+
+Kan även användas som marinad till kyckling eller kött.`
+  },
+  {
+    id: 16,
+    title: "Potatis – Lisa",
+    category: "Vegetariskt & tillbehör",
+    ingredients: [
+      "Potatis",
+      "Grekisk salladsdressing (1,5 dl olja, 2 påsar krydda)",
+      "Kapris",
+      "Flingsalt",
+      "Svartpeppar",
+      "Oliver",
+      "Picklad rödlök"
+    ],
+    instructions: `Koka potatisen och låt svalna lite.
+
+Blanda med grekisk salladsdressing. Toppa med kapris, oliver, picklad rödlök, flingsalt och svartpeppar.`
+  },
+  {
+    id: 17,
+    title: "Jönköpings Kebabsås (Madame Edith)",
+    category: "Såser & dressingar",
+    ingredients: [
+      "3 dl gräddfil",
+      "2 dl turkisk yoghurt",
+      "1,5 dl majonnäs",
+      "2 msk ketchup",
+      "2 msk bostongurka",
+      "1 pressad vitlöksklyfta",
+      "2 tsk paprikapulver",
+      "1 tsk spiskummin",
+      "1 tsk smulad oregano",
+      "Salt och svartpeppar",
+      "3 msk Fanta (apelsin)",
+      "1 msk ananasjuice",
+      "1 msk feferonispad"
+    ],
+    instructions: `1. Blanda gräddfil, yoghurt, majonnäs, ketchup och bostongurka.
+2. Rör ner vitlök och kryddor.
+3. Tillsätt feferonispad, ananasjuice och Fanta.
+4. Låt vila i kylen några timmar eller över natten.`
+  },
+  {
+    id: 18,
+    title: "Inlagd gurka (Västeråsgurka)",
+    category: "Smörgåspålägg & snacks",
+    ingredients: [
+      "1 kg Västeråsgurkor (helst små, knottriga)",
+      "2 msk skånska senapsfrön",
+      "Rikligt med dillkronor",
+      "— Lag —",
+      "2 dl ättikssprit",
+      "3 dl vatten",
+      "4,5 dl socker",
+      "1 dl salt"
+    ],
+    instructions: `1. Tvätta gurkorna – de behöver inte borstas och ska INTE ligga i saltvatten.
+2. Skiva dem genast – tunt, centimetertjockt eller i längsstavar. Aldrig hela.
+3. Varva gurkorna i kruka med senapsfrön och dillkronor.
+4. Rör ihop lagen kallt tills socker och salt löst sig – den ska INTE kokas.
+5. Häll lagen över. Den verkar knapp men gurkorna avger vätska de första dygnen.`
+  },
+  {
+    id: 19,
+    title: "Kålsallad",
+    category: "Vegetariskt & tillbehör",
+    ingredients: [
+      "1/3 vitkål",
+      "1/3 rödkål",
+      "1/2 lök",
+      "1–2 gurkor",
+      "1 morot",
+      "20 g valnötter",
+      "2 vitlöksklyftor",
+      "2 msk olivolja",
+      "1 msk honung",
+      "2 msk senap",
+      "1 tsk risvinäger",
+      "1/4 tsk salt (till kål) + 1/4 tsk salt (till gurka)"
+    ],
+    instructions: `Strimla vitkål och rödkål, salta och låt stå en stund.
+
+Skiva gurka och salta. Skiva lök, riv morot.
+
+Blanda dressingen: olivolja, honung, senap, risvinäger och vitlök.
+
+Blanda allt, toppa med valnötter.`
+  },
+  {
+    id: 20,
+    title: "Havrebröd",
+    category: "Frukost & bakverk",
+    ingredients: [
+      "8 dl glutenfria havregryn",
+      "1,5 dl mandelmjöl + 0,5 dl bovetemjöl (alt. kokos, ris eller teff)",
+      "2–3 morötter (finmixade med 5 dl vatten)",
+      "Ca 0,6 dl linfrö",
+      "0,5 tsk brödkryddor",
+      "1 tsk salt",
+      "Nötter, aprikoser (valfritt)",
+      "Pumpakärnor, solrosfrön eller sesamfrön (uppepå)"
+    ],
+    instructions: `Finmixa morötterna tillsammans med 5 dl vatten.
+
+Blanda havregryn, mjöl, linfrö, brödkryddor och salt. Rör ner morotsmixen. Blanda till en gröt och låt stå några minuter.
+
+Bred ut smeten på en ugnsplåt med slickepott.
+
+Rosta pumpakärnorna i lite olja och salt i en torr panna tills de fått färg. Strö frön och rostade pumpakärnor över brödet.
+
+Grädda i 200 grader i ca 40 minuter.
+
+Ta av bakplåtspappret direkt när brödet kommer ur ugnen!
+
+Klipp i rader och fyrkanter när det svalnat. Lägg i frysen. Rosta och ät!`
+  },
+  {
+    id: 21,
+    title: "Caesardressing",
+    category: "Såser & dressingar",
+    ingredients: [
+      "1 hårdkokt ägg (ev. 2 små)",
+      "3 ansjovisfiléer, finhackade",
+      "1 msk kapris, avrunna",
+      "1 vitlöksklyfta, finhackad",
+      "1 msk Dijonsenap",
+      "Saft från ½ citron",
+      "100 ml olivolja (eller druvkärnolja)",
+      "2 msk riven parmesan (rekommenderas)",
+      "Salt & nymald svartpeppar"
+    ],
+    instructions: `Ger ca 2,5 dl.
+
+1. Förbered: Skala och mosa ägget fint. Hacka ansjovis, kapris och vitlök.
+2. Emulsion: Blanda senap och citronsaft i en skål. Vispa medan du droppar i oljan långsamt tills det blir en tjock, krämig emulsion.
+3. Smaksätt: Tillsätt äggmos, ansjovis, kapris, vitlök och parmesan. Blanda väl.
+4. Justera kryddning: Smaka av med salt och peppar – tänk på att ansjovis, kapris och parmesan redan bidrar med sälta.
+5. Servera på romansallad med krutonger. Förvara i kyl upp till 3 dagar, vispa om innan servering.`
+  },
+  {
+    id: 22,
+    title: "Guldmjölk & Guldpasta",
+    category: "Dryck & hälsa",
+    ingredients: [
+      "— Guldpasta —",
+      "0,5 dl gurkmeja EKO",
+      "1 msk torkad ingefära",
+      "1 tsk svartpeppar",
+      "1,5 dl vatten",
+      "— Guldmjölk (per kopp) —",
+      "0,5–1 tsk guldpasta",
+      "3 dl valfri mjölk",
+      "1 tsk honung (valfritt)",
+      "En nypa kardemumma",
+      "En nypa kanel",
+      "1 tsk kokosolja neutral EKO (valfritt)"
+    ],
+    instructions: `Guldpasta: Blanda alla ingredienser i en kastrull och sjud på svag värme i 5–10 minuter tills det blir en tjock pasta. Förvara i glasburk i kylskåp – håller ca 2 veckor.
+
+Guldmjölk: Värm mjölken och rör ner önskad mängd guldpasta samt övriga ingredienser. Servera varm.`
+  },
+  {
+    id: 23,
+    title: "Crème fraiche-sås med örter",
+    category: "Såser & dressingar",
+    ingredients: [
+      "½ buljongtärning (grönsak)",
+      "2 dl crème fraiche",
+      "1 vitlöksklyfta",
+      "0,5 msk senap",
+      "0,5 dl hackad gräslök",
+      "0,5 dl hackad persilja"
+    ],
+    instructions: `1. Smält buljongen i crème fraiche under omrörning på låg värme.
+2. Dra kastrullen åt sidan. Pressa ner vitlök.
+3. Rör ner senap, gräslök och persilja.`
+  },
+  {
+    id: 24,
+    title: "Jordnötssås",
+    category: "Såser & dressingar",
+    ingredients: [
+      "4 dl jordnötter",
+      "400 g kokosmjölk",
+      "1 lök",
+      "1 vitlöksklyfta",
+      "1 tsk finhackad ingefära",
+      "1 tsk koriander",
+      "2 msk curry",
+      "1 msk röd currypasta",
+      "1 msk sambal oelek",
+      "2 msk brun farin",
+      "1 msk soja",
+      "Salt"
+    ],
+    instructions: `Hacka lök, vitlök och ingefära. Stek i olja på medelvärme tills löken mjuknar.
+
+Tillsätt curry, sambal oelek, koriander och ingefära och fräs några sekunder.
+
+Kör jordnötterna i matberedaren till jordnötssmör. Häll i kokosmjölken och mixa ihop allt.
+
+Sänk värmen och vänd ner i pannan. Tillsätt socker, soja och salt efter smak.
+
+Koka upp och låt puttra 3–5 minuter under omrörning. Späd med mer kokosmjölk om den är för tjock.`
+  },
+  {
+    id: 25,
+    title: "Vietnamesisk Kycklingcurry (Cà Ri Gà)",
+    category: "Kött & fågel",
+    ingredients: [
+      "900 g kyckling (gärna lår/vingar med ben och skinn)",
+      "2 msk vietnamesiskt curry-pulver",
+      "2 tsk lökpulver + 2 tsk salt (marinad)",
+      "450 g potatis (fast sort)",
+      "450 g morötter",
+      "1 gul lök",
+      "2 citrongrässtjälkar (krossade)",
+      "4 vitlöksklyftor, hackade",
+      "2 tsk röd currypasta",
+      "½ tsk paprikapulver",
+      "3 lagerblad",
+      "2 tsk socker",
+      "1 tsk kycklingbuljongpulver",
+      "5–7 dl vatten + 5–7 dl kycklingbuljong",
+      "1 dl kokosgrädde eller kokosmjölk"
+    ],
+    instructions: `Förberedelsetid: 2 tim | Tillagningstid: 1 tim | 4 portioner
+
+1. Marinera kycklingen: Blanda curry-pulver, lökpulver och salt. Gnid in kycklingen och marinera 2–4 tim i kyl.
+
+2. Förbered grönsaker: Skär potatis och morötter i ca 4 cm bitar. Förstek i airfryer 200°C 13–15 min (eller fritera) tills de fått yta men ej genomkokta.
+
+3. Bryn kycklingen i olja på alla sidor. Ta upp och ställ åt sidan.
+
+4. Stek aromater: Lök och citrongräs ca 5–10 min. Tillsätt vitlök, currypasta och paprika, fräs 3 min.
+
+5. Lägg tillbaka kycklingen. Tillsätt lagerblad, socker, buljongpulver. Häll i vatten och buljong. Sjud med lock.
+
+6. Efter 5 min: smaka av, tillsätt potatis och morötter. Sjud tills kyckling är genomkokt och grönsaker mjuka.
+
+7. Rör ner kokosgrädden. Koka upp en sista gång, stäng av värmen.
+
+Servera med baguette eller ris. Smakar ännu bättre dagen efter!`
+  },
+  {
+    id: 26,
+    title: "Grön ärtröra",
+    category: "Smörgåspålägg & snacks",
+    ingredients: [
+      "Ärtor",
+      "1 liten röd lök",
+      "1 vitlöksklyfta",
+      "2 msk citronsaft",
+      "3 msk olivolja",
+      "Salt",
+      "Svartpeppar"
+    ],
+    instructions: `Mixa alla ingredienser i Ninja (eller stavmixer) till önskad konsistens – grovt eller slät.
+
+Smaka av med salt och peppar.`
+  },
+  {
+    id: 27,
+    title: "Khao Soi (Thaisoppa med nudlar)",
+    category: "Soppor",
+    ingredients: [
+      "2 msk olja",
+      "1 knippe salladslök (vita och gröna delar separerade)",
+      "2 morötter, tunt skivade",
+      "1 schalottenlök, skivad",
+      "1 färsk röd chili, skivad",
+      "1 tsk socker",
+      "3 vitlöksklyftor, finhackade",
+      "60 ml röd currypasta",
+      "3 msk fisksås",
+      "90 ml + 2 msk sojasås",
+      "140 g babyspenat (eller fryst urkramad)",
+      "2 burkar (á 400 ml) kokosmjölk",
+      "7,5 dl kycklingbuljong",
+      "450 g risnudlar (kokta)",
+      "450 g kyckling (popcornkyckling eller filéer)",
+      "2 msk honung"
+    ],
+    instructions: `1. Stek de vita salladslöksdelarna, morötter, schalottenlök, chili och socker i olja ca 5 min. Tillsätt vitlök och currypasta, fräs 1 min.
+
+2. Tillsätt fisksås, 60 ml soja och spenaten. Koka 1 min. Häll i kokosmjölk och buljong. Sjud på låg värme.
+
+3. Blanda honung och 2 msk soja. Blanda med kycklingen på en plåt. Baka i 190°C i 4–5 min tills karamelliserad.
+
+4. Servera: Häll buljong och grönsaker i skålar, toppa med nudlar och kyckling. Garnera med koriander, basilika, lime och sriracha.`
+  },
+  {
+    id: 28,
+    title: "LCHF-bröd / Frallor",
+    category: "Frukost & bakverk",
+    ingredients: [
+      "4 ägg",
+      "1 dl vatten",
+      "1 dl mandelmjöl",
+      "0,5 dl kokosmjöl",
+      "0,5 dl pofiber",
+      "2 msk fiberhusk",
+      "2 tsk bakpulver",
+      "1 tsk salt",
+      "Vallmofrön eller sesamfrön (till garnering)"
+    ],
+    instructions: `1. Vispa äggen fluffigt.
+2. Tillsätt vatten och de torra ingredienserna. Blanda väl.
+3. Låt degen svälla i 10 minuter.
+4. Forma till frallor och strö över frön.
+5. Grädda i 200 grader i ca 15–20 minuter.`
+  },
+  {
+    id: 29,
+    title: "Peppargräddsås med konjak",
+    category: "Såser & dressingar",
+    ingredients: [
+      "500 ml vispgrädde",
+      "500 ml kalvbuljong (från tärning)",
+      "100 g smör",
+      "40 g schalottenlök, finhackad (brunoise)",
+      "10 g pepparblandning, oblancherad (50/50 kampot & gröna pepparkorn)",
+      "30 ml konjak",
+      "5 ml sherryvinäger",
+      "5 ml citronsaft (vid servering)"
+    ],
+    instructions: `1. Bered kalvbuljong: Lös upp tärningen i 500 ml varmt vatten. Ställ åt sidan.
+2. Reducera grädden: Sjud grädden tills den reducerats till 2/3 (ca 330 ml). Ställ åt sidan.
+3. Fräs lök och peppar: Skumma smöret i en kastrull på medelvärme. Tillsätt schalottenlök och peppar, fräs ca 30 sek tills löken är mjuk. Smaka av pepparhettan redan här.
+4. Tillsätt konjak: Häll i konjaken och flämba, eller låt alkoholen koka bort i ca 1 minut.
+5. Tillsätt buljong och grädde: Häll i kalvbuljongen och den reducerade grädden. Sjud på låg värme tills såsen får rätt konsistens. Smaka av och tillsätt mer peppar om det behövs.
+6. Smaka av och servera: Tillsätt ev. mer smör för rundare smak. Balansera med sherryvinäger och citronsaft direkt vid servering. Smaka av saltet noga – buljong från tärning är saltare än demi-glace.
+
+Pepparblandning: Krossa oblancherad kampotpeppar och gröna pepparkorn (50/50) lätt och sikta bort fint pulver. OBS: Oblancherad peppar är stark – börja med 10 g och smaka av. Med blancherad peppar (tre blancheringar i nytt vatten, torka vid 70°C) kan du använda upp till 28 g.`
+  },
+  {
+    id: 30,
+    title: "Christers Marinad",
+    category: "Såser & dressingar",
+    ingredients: [
+      "Olja",
+      "Soja",
+      "Sambal oelek",
+      "Sweet chili",
+      "Honung",
+      "Vitvinsvinäger",
+      "Färsk chilifrukt",
+      "Vitlök",
+      "Chiliflakes",
+      "Svartpeppar",
+      "Grillkrydda"
+    ],
+    instructions: `Blanda alla ingredienser efter smak. Fungerar som marinad till kyckling, kött eller grönsaker.
+
+Låt marinera minst 1–2 timmar (gärna över natten) i kylskåp.`
+  }
+];
+
+const categories = ["Alla", ...new Set(recipes.map(r => r.category))];
+let activeCategory = "Alla";
+let searchTerm = "";
+
+function buildCategoryNav() {
+  const nav = document.getElementById("categoryNav");
+  categories.forEach(cat => {
+    const btn = document.createElement("button");
+    btn.className = "cat-btn" + (cat === "Alla" ? " active" : "");
+    btn.textContent = cat;
+    btn.onclick = () => {
+      activeCategory = cat;
+      document.querySelectorAll(".cat-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      renderRecipes();
+    };
+    nav.appendChild(btn);
+  });
+}
+
+function filterRecipes() {
+  searchTerm = document.getElementById("searchInput").value.toLowerCase();
+  renderRecipes();
+}
+
+function getFiltered() {
+  return recipes.filter(r => {
+    const matchCat = activeCategory === "Alla" || r.category === activeCategory;
+    const matchSearch = !searchTerm ||
+      r.title.toLowerCase().includes(searchTerm) ||
+      r.ingredients.join(" ").toLowerCase().includes(searchTerm);
+    return matchCat && matchSearch;
+  });
+}
+
+function renderRecipes() {
+  const main = document.getElementById("mainContent");
+  const filtered = getFiltered();
+  main.innerHTML = "";
+
+  if (filtered.length === 0) {
+    main.innerHTML = '<p class="empty-msg">Inga recept hittades.</p>';
+    return;
+  }
+
+  const grouped = {};
+  filtered.forEach(r => {
+    if (!grouped[r.category]) grouped[r.category] = [];
+    grouped[r.category].push(r);
+  });
+
+  const catIcons = {
+    "Kött & fågel": "🥩",
+    "Soppor": "🍲",
+    "Vegetariskt & tillbehör": "🥗",
+    "Såser & dressingar": "🫙",
+    "Frukost & bakverk": "🥞",
+    "Smörgåspålägg & snacks": "🥪",
+    "Dryck & hälsa": "🌿"
+  };
+
+  Object.entries(grouped).forEach(([cat, recs]) => {
+    const section = document.createElement("section");
+    section.innerHTML = `<h2 class="section-title"><span>${catIcons[cat] || "🍴"}</span> ${cat}</h2>`;
+    const grid = document.createElement("div");
+    grid.className = "recipe-grid";
+    recs.forEach(r => {
+      const card = document.createElement("div");
+      card.className = "recipe-card";
+      const preview = r.ingredients.slice(0, 4).join(", ") + (r.ingredients.length > 4 ? "…" : "");
+      card.innerHTML = `
+        <div class="card-header"><h3>${r.title}</h3></div>
+        <div class="card-body">${preview}</div>
+      `;
+      card.onclick = () => openModal(r.id);
+      grid.appendChild(card);
+    });
+    section.appendChild(grid);
+    main.appendChild(section);
+  });
+}
+
+function openModal(id) {
+  const r = recipes.find(x => x.id === id);
+  if (!r) return;
+  document.getElementById("modalCat").textContent = r.category;
+  document.getElementById("modalTitle").textContent = r.title;
+  const body = document.getElementById("modalBody");
+  body.innerHTML = `
+    <div class="recipe-section">
+      <h4>Ingredienser</h4>
+      <ul>${r.ingredients.map(i => `<li>${i}</li>`).join("")}</ul>
+    </div>
+    <div class="recipe-section">
+      <h4>Gör så här</h4>
+      <p>${r.instructions}</p>
+    </div>
+  `;
+  document.getElementById("modalOverlay").classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById("modalOverlay")) closeModalBtn();
+}
+
+function closeModalBtn() {
+  document.getElementById("modalOverlay").classList.remove("open");
+  document.body.style.overflow = "";
+}
+
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") closeModalBtn();
+});
+
+buildCategoryNav();
+renderRecipes();
+</script>
+</body>
+</html>
